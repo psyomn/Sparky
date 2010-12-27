@@ -26,14 +26,21 @@ require 'fileutils'
 # Load Settings / Saved data
 #######################################
 
-base = "#{ENV['HOME']}/.config/sparky"
-conf = "#{base}/sparky.conf"
-save = "#{base}/sparkysave.dat"
-
+base = "#{ENV['HOME']}/.config/sparky" # The base
+conf = "#{base}/sparky.conf"           # Possible configuration file
+save = "#{base}/sparkysave.dat"        # Save the tasks in this file
+$arr = Array.new                       # Store the loaded data
 storeData = Array.new
 
 if File.file? conf and File.file? save # both exist save data
   puts "Loading data"
+  s = File.open(save)
+  $arr = s.readlines
+
+  $arr.each_index { |x| $arr[x] = $arr[x].gsub(/\n/, '') }
+
+  p $arr if ARGV[0] == 'd'
+
 else # create folders, create files
   puts "Creating Folders and Files"
   FileUtils.mkdir_p(base) # create the dirs recursively
@@ -46,6 +53,13 @@ end
 #######################################
 
 todoList  = TkListbox.new do
+  ## Initialize with saved data
+  $arr.each_index { |x|
+    insert 0, $arr[x]
+    storeData[x] = $arr[x]
+  }
+  ## End init
+
   selectmode "multiple"
   width 20
   height 10
