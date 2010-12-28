@@ -9,6 +9,10 @@
 # Hopefully with time, it will be 
 # used by different people. 
 #######################################
+# DEBUGING
+#  o for some reason the 'DELETE' 
+#    button doesn't work...
+#######################################
 # TODO
 #  o Need to add a scroll for when
 #    there are too many items in the
@@ -17,6 +21,8 @@
 #  o Find a way on how to make the 
 #    window part of the desktop like
 #    conky or gdeskcal
+#######################################
+# BUGS 
 #######################################
 
 require 'tk'
@@ -83,14 +89,14 @@ end
 doneButton= TkButton.new do
   text "Done"
   command proc {
-    todoList.curselection.each_index{ |li|
-      todoList.delete(todoList.curselection[li-li])
+    storeData.clear # this is not efficient but we're assuming that the user isn't storing giggantic lists
+    todoList.curselection.each{
+      todoList.delete(todoList.curselection[0])
     }
-    
-    ## Update the list to save at end
-    todoList.size.times { |x|
-      storeData[x] = todoList.get(x)
+    todoList.size.times{ |li|
+      storeData[li] = todoList.get(li)
     }
+    puts 'Todo list updated : ' + storeData.to_s if ARGV[0] == 'd'
   }
 end
 
